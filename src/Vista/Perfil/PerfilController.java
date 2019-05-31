@@ -121,7 +121,7 @@ public class PerfilController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         not = new Notificacion();
         validarCampos = new ValidarCampos();
-        usuarioDAO = new usuariosDAO(gestion);
+//        usuarioDAO = new usuariosDAO(gestion);
         Image img = new Image("Imagenes/banner2.jpg");
         ImageView imagev = new ImageView(img);
 
@@ -170,7 +170,7 @@ public class PerfilController implements Initializable {
      * Muestra los valores del usuario en las etiquetas y foto
      */
     public void calcularnodos() {
-//        usuarioDAO = new usuariosDAO(gestion);
+        usuarioDAO = new usuariosDAO(gestion);
         nickTF.setText(usuario.getNick());
         nombreTF.setText(usuario.getNombre());
         apellidosTF.setText(usuario.getApellidos());
@@ -192,6 +192,7 @@ public class PerfilController implements Initializable {
      */
     @FXML
     private void modificar(ActionEvent event) {
+//      usuarioDAO = new usuariosDAO(gestion);
         boolean modiNick = false;
         boolean modiFoto = false;
         boolean todoCorrecto = true;
@@ -255,7 +256,6 @@ public class PerfilController implements Initializable {
                     controlador.cargaNick();
                     controlador.cargaFoto();
                 }
-
             }
 //fin NICK  ------------
 
