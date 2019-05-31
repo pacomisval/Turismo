@@ -54,38 +54,40 @@ public class Usuario implements Comparable<Usuario> {
         this.fotoFile = fotoFile;
     }
 
-    public File cargarfoto() {
+    public File selectFile() {
         FileChooser fileChooser = new FileChooser();
-        // Agregar filtros para facilitar la busqueda
-        fileChooser.getExtensionFilters().addAll(
+        fileChooser.getExtensionFilters().addAll( // Agregar filtros para facilitar la busqueda
                 // new FileChooser.ExtensionFilter("All ", "*.*"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
+                new FileChooser.ExtensionFilter("Imagen JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("Imagen PNG", "*.png")
         );
         File fotoElegida = fileChooser.showOpenDialog(null);
-
         return fotoElegida;
     }
 
     public void guardarFoto() throws IOException {
+        File directorio = new File("c:\\tempTurismo\\");
+        directorio.mkdirs();
         if (fotoFile != null) {
             Path from = Paths.get(fotoFile.toURI());
-            Path to = Paths.get("src/imagenes/usuarios/" + foto);
-            //Files.copy(from.toFile(), to.toFile());
-            Files.copy(from.toAbsolutePath(), to.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+            Path copiaPackage = Paths.get("src/imagenes/usuarios/" + foto);
+            Path copiaMaquina = Paths.get("C:\\tempTurismo\\" + foto);
+            Files.copy(from.toAbsolutePath(), copiaPackage.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(from.toAbsolutePath(), copiaMaquina.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
-     public void cambiarArchivoFoto(String OldArchivo,String NewArchivo) throws IOException {
-     
-            Path from = Paths.get(OldArchivo);
-            Path to = Paths.get("src/imagenes/usuarios/" + NewArchivo);
-            //Files.copy(from.toFile(), to.toFile());
-            Files.copy(from.toAbsolutePath(), to.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
-        
+
+    public void cambiarArchivoFoto(String OldArchivo, String NewArchivo) throws IOException {
+
+        Path from = Paths.get(OldArchivo);
+        Path to = Paths.get("src/imagenes/usuarios/" + NewArchivo);
+        //Files.copy(from.toFile(), to.toFile());
+        Files.copy(from.toAbsolutePath(), to.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+
     }
 
-/// Poner el NICK como nombre del ARCHIVO FOTO
-    public String fotoToNick() {
+///// Poner el NICK como nombre del ARCHIVO FOTO
+    public String renombrarFoto() {
         if (fotoFile == null) {
             foto = "avatar.png";
         } else {
@@ -96,8 +98,6 @@ public class Usuario implements Comparable<Usuario> {
         return foto;
     }
 
-    
-    
     private enum rol {
         CLIENTE, ADMINISTRADOR
     }

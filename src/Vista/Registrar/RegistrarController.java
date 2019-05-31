@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -127,11 +129,10 @@ public class RegistrarController implements Initializable {
         usuario = new Usuario();
         validarCampos = new ValidarCampos();
         styleInicio();
-        styleRellenarCamposVacios();
+        rellenarCampos();
     }
 
     private void styleInicio() {
-
         //Imagen fondo
         Image img = new Image("Imagenes/fondoRegistrarse.jpg");
         ImageView imagev = new ImageView(img);
@@ -159,9 +160,8 @@ public class RegistrarController implements Initializable {
         });
     }
 
-    private void styleRellenarCamposVacios() {
-
-        avatarIV.setOnMouseClicked(event -> cargarfoto());
+    private void rellenarCampos() {
+        avatarIV.setOnMouseClicked(event -> mostrarFoto());
         nickTF.setOnMouseClicked(event -> nickL.setStyle(aviso));
         contraPF.setOnMouseClicked(event -> contraL.setStyle(aviso));
         nombreTF.setOnMouseClicked(event -> nombreL.setStyle(aviso));
@@ -170,15 +170,15 @@ public class RegistrarController implements Initializable {
         emailTF.setOnMouseClicked(event -> emailL.setStyle(aviso));
         fecNacTF.setOnMouseClicked(event -> fecNacL.setStyle(aviso));
     }
-
-    private void cargarfoto() {
-//        Stage stage = (Stage) this.avatarIV.getParent().getScene().getWindow();
-        fotoFile = usuario.cargarfoto();
+/**
+ * Muestra la foto que seleccionamos del explorador de archivos
+ */
+    private void mostrarFoto() {
+        fotoFile = usuario.selectFile();
         if (fotoFile != null) {
             Image image = new Image(fotoFile.toURI().toString());
             avatarIV.setImage(image);
         }
-
     }
 
     public void setUsuarioDAO(usuariosDAO usuarioDAO) {
@@ -186,14 +186,20 @@ public class RegistrarController implements Initializable {
     }
 
     //ACCIONES------------------------------------------------------------------
+ 
+   /**
+    * Da valor a los atributos de usuario e inserta en BD
+    * @param event
+    * 
+    */ 
     @FXML
     private void registrar(ActionEvent event) throws SQLException, IOException {    //Boton Registrar      
         boolean registrado = false;
 
-        if (comprobacionCampos() == true) {         //Validando formato de entrada
-            LocalDate fecNac = fecNacTF.getValue();
+        if (comprobacionCampos()) {         //Validando formato de entrada
+            
 
-            //Control de entradas nulas//
+         
             boolean noInsertar = camposVacios();        //ValidaCampos not null
             //crear usuario// 
             if (!noInsertar) {
@@ -207,21 +213,19 @@ public class RegistrarController implements Initializable {
                 usuario.setDireccion(direccion);
                 usuario.setEmail(email);
                 usuario.setFecNac(fecNac);
-                usuario.setFotoFile(fotoFile);
-                String foto = usuario.fotoToNick();
-                usuario.setFoto(foto);
+                usuario.setFotoFile(fotoFile);               
+                usuario.setFoto(usuario.renombrarFoto());
 
                 RadioButton selecRol = (RadioButton) rolUsuRB.getSelectedToggle();
                 usuario.setPerfil(selecRol.getText().toUpperCase());
-                System.out.println("perfil" + usuario.getPerfilString());
+             
                 try {
                     //insertar usuario en BD//
                     registrado = usuarioDAO.insertarUsuario(usuario);
                 } catch (SQLException ex) {
-                    not.alert("Error", "Hay un error de SQL");
+                    not.alert("SQL", "Hay un error de SQL");
                 }
-                //avatarIV.getImage().getUrl();
-
+             
                 if (registrado) {
                     usuario.guardarFoto();
                     //Cerrar ventana 
@@ -250,23 +254,31 @@ public class RegistrarController implements Initializable {
         stage.close();
     }
     //CONTROL DE DATOS----------------------------------------------------------
-
-    private boolean comprobacionCampos() throws SQLException {
+/**
+ * Comprueba si el formato de los campos recogidos se corresponden con la
+ * insercion en la BD
+ * @return true si todos son correctos
+ *
+ */
+    private boolean comprobacionCampos()  {
         recogerDatos();
         boolean todoCorrecto = true;
         String correcto = " -fx-text-fill: rgb(56, 175, 88)"; //Verde
-
-        if ((usuarioDAO.clienteExiste(nick) == true) || nickTF.getText().equals("")) {
-            todoCorrecto = false;
-            nickTF.setText("");
-            if (nickTF.getText().equals("")) {
-                nickTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
+        try {
+            if ((usuarioDAO.clienteExiste(nick) == true) || nickTF.getText().equals("")) {
+                todoCorrecto = false;
+                nickTF.setText("");
+                if (nickTF.getText().equals("")) {
+                    nickTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
+                } else {
+                    nickTF.setPromptText("Ese usuario ya existe");
+                }
+                nickL.setStyle(mal);
             } else {
-                nickTF.setPromptText("Ese usuario ya existe");
+                nickL.setStyle(correcto);
             }
-            nickL.setStyle(mal);
-        } else {
-            nickL.setStyle(correcto);
+        } catch (SQLException ex) {
+           not.error("SQL","No se ha podido verificar el usuario");
         }
 
         if (validarCampos.comprobardni(dni) == false) {
@@ -296,6 +308,13 @@ public class RegistrarController implements Initializable {
         return todoCorrecto;
     }
 
+/**
+ * Comprueba si hay campos recogidos vacios y no se corresponden con la insercion NOT NULL en la BD
+ * Informa Modificando color del Label y en PrompText 
+ * @return true si todos son correctos
+ *
+ */    
+    
     private boolean camposVacios() {   //   devuelve true si hay algun campo "necesario" nulo 
         boolean vacio = false;
         String estilo = null;
@@ -342,7 +361,6 @@ public class RegistrarController implements Initializable {
 
     //METODOS UTILES------------------------------------------------------------
     private void recogerDatos() {
-
         nick = nickTF.getText();
         contrasena = contraPF.getText();
         nombre = nombreTF.getText();

@@ -4,22 +4,14 @@ import Datos.Bda.GestionBD;
 import Datos.Bda.usuariosDAO;
 import Modelo.Correo;
 import Modelo.Notificacion;
-import Modelo.Transicion;
 import Modelo.Usuario;
 import Vista.Administrador.Principal.PrincipalAdminController;
 import Vista.Principal.PrincipalController;
 import Vista.Registrar.RegistrarController;
-import com.sun.security.auth.PrincipalComparator;
 import java.io.IOException;
-import static java.lang.Math.random;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -45,8 +37,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import javax.mail.MessagingException;
-import javax.swing.FocusManager;
-import org.controlsfx.dialog.LoginDialog;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.password.PasswordEncryptor;
 
@@ -62,12 +52,10 @@ public class UsuarioController implements Initializable {
     private Stage escenario;
     private TranslateTransition translatePrincipal;
     private TranslateTransition translateAgencia;
-    private String tituloAlertSQL = "AlertaSQL";
-    private String mensajeSQL = "error en la base de datos";
     private GestionBD gestion;
     private usuariosDAO usuarioDAO;
     private Notificacion not;
-    Usuario usuario;
+    private Usuario usuario;
 
     @FXML
     private PasswordField contraTF;
@@ -92,10 +80,10 @@ public class UsuarioController implements Initializable {
     @FXML
     private Label olvidar;
 
-    //INICIO--------------------------------------------------------------------
+////////    //INICIO--------------------------------------------------------------------
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         gestion = new GestionBD();
         gestion.conectar();
         usuarioDAO = new usuariosDAO(gestion);
@@ -127,19 +115,25 @@ public class UsuarioController implements Initializable {
         olvidar.getStyleClass().add("recordarpassword");
     }
 
-    //ACCIONES------------------------------------------------------------------
+////////    //ACCIONES------------------------------------------------------------------
     @FXML
     private void logearse(ActionEvent event) throws InterruptedException {
         // Utilizar uno de estos tres metodos
 
-        logearseBueno();
+        logearse();
         //logearseComoCliente();
         //logearseComoAdministrador();
 
     }
 
+    /**
+     * Abre ventana Registrarse al darle al boton registrarse
+     *
+     * @param event
+     *
+     */
     @FXML
-    private void registrarse(ActionEvent event) throws IOException {
+    private void registrarse(ActionEvent event) {
         Parent root;
 
         try {
@@ -164,14 +158,13 @@ public class UsuarioController implements Initializable {
         }
     }
 
-    //VENTANAS------------------------------------------------------------------
+////////    //VENTANAS------------------------------------------------------------------
     public void cargarVentanaPrincipal() {
 
 //        escenario = (Stage) this.nickTF.getParent().getScene().getWindow();
         String nombrefichero = "/Vista/Principal/Principal.fxml";
         PrincipalController principalController;
         Parent root;
-
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource(nombrefichero));
@@ -185,7 +178,7 @@ public class UsuarioController implements Initializable {
 
             //Damos valores a los nodos antes de mostrarlos
             principalController.calcularNodos();
-            
+
             escenario.setScene(new Scene(root));
             escenario.show();
 
@@ -219,54 +212,37 @@ public class UsuarioController implements Initializable {
 
         } catch (IOException ex) {
             not.error("ERROR", "Error al intentar cargar ventana Principal Administrador");
-     
+
         }
     }
 
-//    private void cargarVentanaRegistrarse() {
-//
-//        Parent root;
-//
-//        try {
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(getClass().getResource("/Vista/Registrar/Registrar.fxml"));
-//            root = loader.load(); // el metodo initialize() se ejecuta
-//            //OBTENER EL CONTROLADOR DE LA VENTANA     UsuarioController usuarioControlador = loader.getController();
-//
-//            Stage escena = new Stage();     //En Stage nuevo.
-//            escena.setTitle("Registrarse");
-//
-//            // NO PERMITE ACCESO A LA VENTANA PRINCIPAL
-//            escena.initModality(Modality.APPLICATION_MODAL);
-//            escena.setScene(new Scene(root));
-//            escena.showAndWait();
-//            //RECOGEMOS  LA INFORMACION ESCRITA EN LA OTRA VENTANA
-//
-//        } catch (IOException ex) {
-//            not.error("ERROR", "Error al intentar cargar ventana Principal");
-//        }
-//    }
-
-    //CONTROL-------------------------------------------------------------------
+////////    //CONTROL-------------------------------------------------------------------
+    /**
+     * Comprueba si la contraseña introducida coincide con la de la BD
+     *
+     * @return
+     */
     public boolean verificaUsuario() {
-
         PasswordEncryptor encryptor = new BasicPasswordEncryptor();
         boolean existe = false;
         boolean checkPassword;
         String nick = nickTF.getText();
         String contrasena = contraTF.getText();
         String contrasenaBD = null;
-
         try {
             contrasenaBD = usuarioDAO.obtenerContra(nick);
         } catch (SQLException ex) {
-            not.alert(tituloAlertSQL, mensajeSQL);
+            not.alert("SQL","No hemos podido acceder a tu contraseña");
         }
         checkPassword = encryptor.checkPassword(contrasena, contrasenaBD);
         return checkPassword;
     }
 
-    private void logearseBueno() throws InterruptedException {
+    /**
+     * Da valor a los atributos del Usuario logeado abre la Ventana Principal
+     * del rol del usuario
+     */
+    private void logearse() {
         escenario = (Stage) this.nickTF.getParent().getScene().getWindow();
         boolean logeado = verificaUsuario();        //Verifica que existe y contraseña correcta
 
@@ -294,10 +270,8 @@ public class UsuarioController implements Initializable {
                 not.error("ERROR SQL",
                         "en logearseBueno() --- UsuarioController");
             }
-        } else { 
-           not.error("ERROR","Usuario o contraseña incorrectos");
-//            not.prueba("Error", "Usuario o contraseña incorrectos"); 
-
+        } else {
+            not.error("ERROR", "Usuario o contraseña incorrectos");
             nickTF.setText("");
             contraTF.setText("");
         }
@@ -316,6 +290,11 @@ public class UsuarioController implements Initializable {
         }
     }
 
+    /**
+     * Efecto grafico antes de cargar la ventana principal acorde al rol
+     *
+     * @param rol
+     */
     public void transicionPrincipal(String rol) {
 
         translatePrincipal = new TranslateTransition(Duration.seconds(1), paneCapaTriangulo);
@@ -345,33 +324,43 @@ public class UsuarioController implements Initializable {
 
     }
 
+    /**
+     * Si el correo introducido corresponde con el de la BD genera una
+     * contraseña aleatoria y la manda por email.
+     *
+     * @param event
+     *
+     */
     @FXML
-    private void recordarPass(MouseEvent event) throws SQLException, MessagingException {
-
+    private void recordarPass(MouseEvent event) {
         //Enviar un correo con una nueva contraseña
         not = new Notificacion();
         Pair<String, String> pareja = not.recordar();
-        if ((!"".equals(pareja.getKey()))) {//por si damos a cancelar 
-            String email = usuarioDAO.DarCorreo(pareja.getKey());
-            if (email != null) {
-
-                if (email.equals(pareja.getValue())) {
-                    String numero = (int) (Math.random() * 1000) + "";
-                    String contra = usuario.encriptar(numero);
-                    usuarioDAO.introducirContra(contra, pareja.getKey());
-                    Correo correo = new Correo();
-//                    correo.setparametros(pareja, numero, correo);
-                     correo.setparametros(pareja, numero);
-                    correo.mandarcorreo();
-                    not.info("Email", "Revisa tu correo, te hemos enviado un mensaje");
-                } else {
-                    not.alert("Email", "No coincide con el correo que tenemos de ti");
+        if ((!"".equals(pareja.getKey()))) {
+            try {
+                String email = usuarioDAO.DarCorreo(pareja.getKey());
+                if (email != null) {
+                    if (email.equals(pareja.getValue())) {
+                        String newPass = (int) (Math.random() * 1000) + "";
+                        String contra = usuario.encriptar(newPass);
+                        usuarioDAO.introducirContra(contra, pareja.getKey());
+                        Correo correo = new Correo();
+                        correo.setparametros(pareja, newPass);
+                        correo.mandarcorreo();
+                        not.info("Email", "Revisa tu correo, te hemos enviado un mensaje");
+                    } else {
+                        not.alert("Email", "No coincide con el correo que tenemos de ti");
+                    }
                 }
+            } catch (SQLException ex) {
+                not.error("SQL", "Hemos tenido un problema al recuperar tu correo");
+            } catch (MessagingException ex) {
+                not.error("EMAIL", "Hemos tenido un problema al mandar tu email");
             }
         }
     }
 
-    //ATAJOS DE PROGRAMADOR-----------------------------------------------------
+////////    //ATAJOS DE PROGRAMADOR-----------------------------------------------------
     private void logearseComoCliente() {
         cargarVentanaPrincipal();
     }

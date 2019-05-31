@@ -156,10 +156,10 @@ public class PerfilController implements Initializable {
         selecionarFoto = true;
 
         //elegir archivo       
-        fotoFile = usuario.cargarfoto();
+        fotoFile = usuario.selectFile();
 
         //muestra archivo seleccionado
-        // cargarfoto();
+        // selectFile();
         if (fotoFile != null) {
             Image image = new Image(fotoFile.toURI().toString());
             caraIV.setImage(image);
@@ -360,7 +360,7 @@ public class PerfilController implements Initializable {
 //---FOTO   
         if (selecionarFoto) {
             usuario.setFotoFile(fotoFile);
-            foto = usuario.fotoToNick();  ///pasar fotofile a string
+            foto = usuario.renombrarFoto();  ///pasar fotofile a string
             usuario.setFoto(foto);
             modiFoto = usuarioDAO.modificarFoto(foto, id);
             if (modiFoto) {
