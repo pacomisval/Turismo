@@ -53,7 +53,8 @@ public class PerfilController implements Initializable {
     private String foto;
     private boolean selecionarFoto;
     private final String MAL = " -fx-text-fill:red";
-    private final String CORRECTO = " -fx-text-fill: rgb(56, 175, 88)"; //Verde
+//    private final String CORRECTO = " -fx-text-fill: rgb(56, 175, 88)"; //Verde
+    private final String AVISO = " -fx-text-fill:black";
     private String nick, nombre, apellidos, dni, telefono, direccion, email;
     private LocalDate fecNac;
     private PrincipalAdminController controlador;
@@ -121,7 +122,6 @@ public class PerfilController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         not = new Notificacion();
         validarCampos = new ValidarCampos();
-//        usuarioDAO = new usuariosDAO(gestion);
         Image img = new Image("Imagenes/banner2.jpg");
         ImageView imagev = new ImageView(img);
 
@@ -146,7 +146,17 @@ public class PerfilController implements Initializable {
 
         botonGuardar.setVisible(false);
         cancelarBT.setVisible(false);
-
+        escucharEdicion();
+    }
+      private void escucharEdicion() {
+        caraIV.setOnMouseClicked(event -> selectFoto());
+        nickTF.setOnMouseClicked(event -> nickL.setStyle(AVISO));
+  
+        nombreTF.setOnMouseClicked(event -> nombreL.setStyle(AVISO));
+        apellidosTF.setOnMouseClicked(event -> apelliL.setStyle(AVISO));
+        telefonoTF.setOnMouseClicked(event -> telefL.setStyle(AVISO));
+        emailTF.setOnMouseClicked(event -> emailL.setStyle(AVISO));
+        fecNacTF.setOnMouseClicked(event -> fecNacL.setStyle(AVISO));
     }
 
     /**
@@ -224,7 +234,7 @@ public class PerfilController implements Initializable {
                     }
                     nickL.setStyle(MAL);
                 } else {
-                    nickL.setStyle(CORRECTO);
+                    nickL.setStyle(AVISO);
                     modiNick = usuarioDAO.modificarNick(nick, id);
                     if (!modiNick) {
                         correctoSQL = false;
@@ -298,7 +308,7 @@ public class PerfilController implements Initializable {
                     dniTF.setPromptText("Intoduce un DNI valido");
                     dniL.setStyle(MAL);
                 } else {
-                    dniL.setStyle(CORRECTO);
+                    dniL.setStyle(AVISO);
                     boolean modificado = usuarioDAO.modificarDni(dni, id);
                     if (modificado) {
                         usuario.setDni(dni);
@@ -329,7 +339,7 @@ public class PerfilController implements Initializable {
                     telefonoTF.setPromptText("Intoduce un Número valido");
                     telefL.setStyle(MAL);
                 } else {
-                    telefL.setStyle(CORRECTO);
+                    telefL.setStyle(AVISO);
                     boolean modificado = usuarioDAO.modificarTelefono(telefono, id);
                     if (modificado) {
                         usuario.setTelefono(telefono);
@@ -355,7 +365,7 @@ public class PerfilController implements Initializable {
                     emailTF.setPromptText("Intoduce un Email valido");
                     emailL.setStyle(MAL);
                 } else {
-                    emailL.setStyle(CORRECTO);
+                    emailL.setStyle(AVISO);
                     boolean modificado = usuarioDAO.modificarEmail(email, id);
                     if (modificado) {
                         usuario.setEmail(email);

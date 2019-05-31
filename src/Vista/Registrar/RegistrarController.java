@@ -11,15 +11,9 @@ import com.jfoenix.controls.JFXTextField;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,7 +29,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -263,7 +256,7 @@ public class RegistrarController implements Initializable {
     private boolean comprobacionCampos()  {
         recogerDatos();
         boolean todoCorrecto = true;
-        String correcto = " -fx-text-fill: rgb(56, 175, 88)"; //Verde
+        String correcto = aviso; //Verde
         try {
             if ((usuarioDAO.clienteExiste(nick) == true) || nickTF.getText().equals("")) {
                 todoCorrecto = false;
@@ -313,8 +306,7 @@ public class RegistrarController implements Initializable {
  * Informa Modificando color del Label y en PrompText 
  * @return true si todos son correctos
  *
- */    
-    
+ */       
     private boolean camposVacios() {   //   devuelve true si hay algun campo "necesario" nulo 
         boolean vacio = false;
         String estilo = null;

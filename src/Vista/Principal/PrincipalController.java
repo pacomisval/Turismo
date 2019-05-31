@@ -210,13 +210,13 @@ public class PrincipalController implements Initializable {
     public void cargaFoto() {
         try {
             caraIV.setImage(new Image("file:///C:/tempTurismo/" + usuario.getFoto()));
-            System.out.println("c:");
+         
         } catch (Exception e) {
             try {
                 caraIV.setImage(new Image("Imagenes/usuarios/" + usuario.getFoto()));
-                System.out.println("package");
+             
             } catch (Exception ex) {
-                System.out.println("avatar");
+             
                 caraIV.setImage(new Image("Imagenes/usuarios/avatar.png"));
             }
         }
