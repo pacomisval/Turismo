@@ -25,7 +25,7 @@ public class TransportesDAO {
 
     public List<Transporte> listarTarjetas() throws SQLException {
         List<Transporte> listaTarjetas = null;
-        String consulta = "SELECT id,nombre,duracion,precio,Descripcion,foto,fotoDescripcion,Clase FROM transporte;";
+        String consulta = "SELECT id,nombre,duracion,precio,Descripcion,foto,fotoDescripcion,Clase FROM transporte ORDER BY nombre;";
         PreparedStatement ps = gestion.getConn().prepareStatement(consulta);
         ResultSet rs = ps.executeQuery();
         listaTarjetas = new ArrayList<>();
@@ -48,7 +48,7 @@ public class TransportesDAO {
 
     public List<String> listaTipos() throws SQLException {
         List<String> listaTipos = null;
-        String consulta = "SELECT Distinct Clase FROM transporte;";
+        String consulta = "SELECT Distinct Clase FROM transporte ORDER BY clase;";
         PreparedStatement ps = gestion.getConn().prepareStatement(consulta);
         ResultSet rs = ps.executeQuery();
         listaTipos = new ArrayList<>();

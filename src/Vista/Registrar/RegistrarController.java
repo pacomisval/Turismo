@@ -22,6 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -119,7 +120,6 @@ public class RegistrarController implements Initializable {
     @FXML
     private ToggleGroup rolUsuRB;
 
-    
     //INICIO--------------------------------------------------------------------
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -148,6 +148,15 @@ public class RegistrarController implements Initializable {
         salirBT.getStyleClass().add("botonEliminar");
         fecNacTF.getStyleClass().add("calendarioRegistrar");
         panePerfil.getStyleClass().add("panePerfil");
+
+        LocalDate fechaMax = LocalDate.now().minusDays(1);
+        fecNacTF.setDayCellFactory(d -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                setDisable(item.isAfter(fechaMax));
+            }
+        });
     }
 
     private void styleRellenarCamposVacios() {
