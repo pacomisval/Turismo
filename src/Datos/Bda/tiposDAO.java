@@ -29,7 +29,7 @@ public class tiposDAO {
 
     public List<Tipo> consultarTipos() throws SQLException {
         List<Tipo> lista = new ArrayList<>();
-        String consulta = "SELECT id, nombre FROM tipos;";
+        String consulta = "SELECT id, nombre FROM tipos ORDER BY nombre;";
         PreparedStatement ps = conn.prepareStatement(consulta);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -40,7 +40,7 @@ public class tiposDAO {
 
     public Tipo consultarTipoDeUnSubtipo(int idSubtipo) throws SQLException {
         Tipo tipo = null;
-        String consulta = "SELECT id, nombre FROM tipos WHERE id = ?;";
+        String consulta = "SELECT id, nombre FROM tipos WHERE id = ? ORDER BY nombre;";
         PreparedStatement ps = conn.prepareStatement(consulta);
         ps.setInt(1, idSubtipo);
         ResultSet rs = ps.executeQuery();

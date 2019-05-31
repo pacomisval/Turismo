@@ -58,7 +58,7 @@ public class experienciasDAO {
 
         List<Experiencia> listaExperiencias = new ArrayList<>();
         if (conn != null) {
-            String consulta = "SELECT id,idUsuario, nombre, descripcion, fechaTopeValidez, foto FROM experiencias;";
+            String consulta = "SELECT id,idUsuario, nombre, descripcion, fechaTopeValidez, foto FROM experiencias ORDER BY nombre;";
             PreparedStatement ps = conn.prepareStatement(consulta);
             ResultSet rs = ps.executeQuery();
             experienciasActividadesDAO experienciasActividadesdao = new experienciasActividadesDAO(gestion);
@@ -128,7 +128,7 @@ public class experienciasDAO {
         List<String> NombreExperiencias = new ArrayList<>();
         
         if (conn != null) {
-            String consulta = "SELECT nombre FROM experiencias;";
+            String consulta = "SELECT nombre FROM experiencias ORDER BY nombre;";
             PreparedStatement ps = conn.prepareStatement(consulta);
             ResultSet rs = ps.executeQuery();
             experienciasActividadesDAO experienciasActividadesdao = new experienciasActividadesDAO(gestion);
