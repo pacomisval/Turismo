@@ -30,10 +30,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DateCell;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 /**
  * FXML Controller class
@@ -75,13 +77,27 @@ public class AgendaController implements Initializable {
     private TableColumn<ActividadExperiencia, Integer> columnaPlazas;
     @FXML
     private TableColumn<ActividadExperiencia, Double> columnaPrecio;
+    @FXML
+    private Pane paneAgenda;
+    @FXML
+    private Label diaInicioL;
+    @FXML
+    private Label diaFinalL;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        diaInicioL.getStyleClass().add("labelAgenda");
+        diaFinalL.getStyleClass().add("labelAgenda");
+        paneAgenda.getStyleClass().add("paneAgenda");
+        datePickerFinal.getStyleClass().add("dateAgenda");
+        datePickerInicio.getStyleClass().add("dateAgenda");
+        comboSubtipo.getStyleClass().add("combo");
+        comboTipo.getStyleClass().add("combo");
+        
+                
     }
 
     public void setGestion(GestionBD gestion) {
