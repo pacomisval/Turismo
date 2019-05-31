@@ -21,7 +21,7 @@ public class Turismo extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/Vista/Usuario/Usuario.fxml"));
 
         Scene scene = new Scene(root);
-        stage.getIcons().add(new Image("/Imagenes/log.png"));
+        stage.getIcons().add(new Image("/Imagenes/logotipo.jpg"));
         stage.setTitle(" Amsterdam");   // o nombre agencia
         stage.setScene(scene);
         stage.setResizable(false);
