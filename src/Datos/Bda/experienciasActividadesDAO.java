@@ -139,6 +139,8 @@ public class experienciasActividadesDAO {
         } else {
             subTipoInsert = subtipo.getNombre();
         }
+        System.out.println("el insert");
+        System.out.println(inicioPS + " - " + finalPS + " - " + tipoInsert + " - " + subTipoInsert);
         List<ActividadExperiencia> lista = new ArrayList<>();
         String sql = "call agendaDelDia(?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
