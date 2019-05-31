@@ -89,6 +89,10 @@ public class AgendaController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        stylesInicio();
+    }
+
+    private void stylesInicio() {
         diaInicioL.getStyleClass().add("labelAgenda");
         diaFinalL.getStyleClass().add("labelAgenda");
         paneAgenda.getStyleClass().add("paneAgenda");
@@ -96,8 +100,7 @@ public class AgendaController implements Initializable {
         datePickerInicio.getStyleClass().add("dateAgenda");
         comboSubtipo.getStyleClass().add("combo");
         comboTipo.getStyleClass().add("combo");
-        
-                
+        botonComprobarAgenda.getStyleClass().add("botonAgenda");
     }
 
     public void setGestion(GestionBD gestion) {
@@ -139,30 +142,35 @@ public class AgendaController implements Initializable {
 
         Tipo tipo = null;
         Subtipo subtipo = null;
-
-        try {
-            tipo = comboTipo.getValue();
-        } catch (Exception e) {
-            not.error("Error", "No ha podido coger el tipo del combobox");
-        }
-        try {
-            subtipo = comboSubtipo.getValue();
-        } catch (Exception e) {
-            not.error("Error", "No ha podido coger el subtipo del combobox");
-        }
-        listaActividades.clear();
-        try {
-            for (ActividadExperiencia act : actexpDAO.consultarAgenda(fechaInicio, fechaFinal, tipo, subtipo)) {
-                listaActividades.add(act);
+        if ((fechaInicio != null) && (fechaFinal != null))  {
+            int compararFechas = fechaFinal.compareTo(fechaInicio);
+            if(compararFechas > 0){
+            System.out.println("Efectivamente ha entrado aqui");
+            try {
+                tipo = comboTipo.getValue();
+            } catch (Exception e) {
+                not.error("Error", "No ha podido coger el tipo");
             }
-        } catch (SQLException e) {
-            not.error("Error", "No se han podido cargar la actividades de la agenda");
+            try {
+                subtipo = comboSubtipo.getValue();
+            } catch (Exception e) {
+                not.error("Error", "No ha podido coger el subtipo");
+            }
+            listaActividades.clear();
+            try {
+                for (ActividadExperiencia act : actexpDAO.consultarAgenda(fechaInicio, fechaFinal, tipo, subtipo)) {
+                    listaActividades.add(act);
+                }
+            } catch (SQLException e) {
+                not.error("Error", "No se han podido cargar la actividades de la agenda");
+            }
+            cargarTabla();
+            }else{
+                not.alert("Error", "La fecha final debe ser posterior a la inicial");
+            }
+        }else{
+            not.alert("Error", "Debes introducir una fecha de inicio y una fecha final");
         }
-        System.out.println("imprimir lista");
-        for (ActividadExperiencia act : listaActividades) {
-            System.out.println(act);
-        }
-        cargarTabla();
     }
 
     private void cargarTabla() {
