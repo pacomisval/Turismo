@@ -66,7 +66,7 @@ public class Usuario implements Comparable<Usuario> {
     }
 
     public void guardarFoto() throws IOException {
-        File directorio = new File("c:\\tempTurismo\\");
+        File directorio = new File("C:\\tempTurismo\\");
         directorio.mkdirs();
         if (fotoFile != null) {
             Path from = Paths.get(fotoFile.toURI());
@@ -78,7 +78,6 @@ public class Usuario implements Comparable<Usuario> {
     }
 
     public void cambiarArchivoFoto(String OldArchivo, String NewArchivo) throws IOException {
-
         Path from = Paths.get(OldArchivo);
         Path to = Paths.get("src/imagenes/usuarios/" + NewArchivo);
         //Files.copy(from.toFile(), to.toFile());

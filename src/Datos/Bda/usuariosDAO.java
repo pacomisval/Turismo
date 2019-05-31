@@ -64,7 +64,7 @@ public class usuariosDAO {
         ps.setString(9, usuario.getEmail());
         ps.setString(10, usuario.getFoto());
         ps.setString(11, usuario.getPerfilString());
-        System.out.println("ps"+ps);
+       
         ps.executeUpdate();
         insertado = true;
         return insertado;

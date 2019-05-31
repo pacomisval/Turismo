@@ -80,10 +80,9 @@ public class UsuarioController implements Initializable {
     @FXML
     private Label olvidar;
 
-////////    //INICIO--------------------------------------------------------------------
+//INICIO--------------------------------------------------------------------
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         gestion = new GestionBD();
         gestion.conectar();
         usuarioDAO = new usuariosDAO(gestion);
@@ -115,15 +114,13 @@ public class UsuarioController implements Initializable {
         olvidar.getStyleClass().add("recordarpassword");
     }
 
-////////    //ACCIONES------------------------------------------------------------------
+//ACCIONES------------------------------------------------------------------
     @FXML
     private void logearse(ActionEvent event) throws InterruptedException {
         // Utilizar uno de estos tres metodos
-
         logearse();
         //logearseComoCliente();
         //logearseComoAdministrador();
-
     }
 
     /**
@@ -158,7 +155,7 @@ public class UsuarioController implements Initializable {
         }
     }
 
-////////    //VENTANAS------------------------------------------------------------------
+//VENTANAS------------------------------------------------------------------
     public void cargarVentanaPrincipal() {
 
 //        escenario = (Stage) this.nickTF.getParent().getScene().getWindow();
@@ -215,8 +212,8 @@ public class UsuarioController implements Initializable {
 
         }
     }
+//CONTROL-------------------------------------------------------------------
 
-////////    //CONTROL-------------------------------------------------------------------
     /**
      * Comprueba si la contraseña introducida coincide con la de la BD
      *
@@ -232,7 +229,7 @@ public class UsuarioController implements Initializable {
         try {
             contrasenaBD = usuarioDAO.obtenerContra(nick);
         } catch (SQLException ex) {
-            not.alert("SQL","No hemos podido acceder a tu contraseña");
+            not.alert("SQL", "No hemos podido acceder a tu contraseña");
         }
         checkPassword = encryptor.checkPassword(contrasena, contrasenaBD);
         return checkPassword;
@@ -360,7 +357,7 @@ public class UsuarioController implements Initializable {
         }
     }
 
-////////    //ATAJOS DE PROGRAMADOR-----------------------------------------------------
+//ATAJOS DE PROGRAMADOR-----------------------------------------------------
     private void logearseComoCliente() {
         cargarVentanaPrincipal();
     }

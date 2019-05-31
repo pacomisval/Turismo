@@ -56,7 +56,7 @@ public class PrincipalController implements Initializable {
     private Notificacion not;
     private GestionBD gestion;
     private PrincipalController principalController;
-       
+
     @FXML
     private AnchorPane Menu;
     @FXML
@@ -181,7 +181,6 @@ public class PrincipalController implements Initializable {
         } catch (Exception e) {
             not.error("Error", "Error al intentar cargar las redes sociales.");
         }
-
     }
 
     public void setGestion(GestionBD gestion) {
@@ -196,20 +195,28 @@ public class PrincipalController implements Initializable {
         cargaNick();
         cargaFoto();
     }
-
+/**
+ * Pone el nick del usuario en el menu superior
+ */
     public void cargaNick() {
         if (usuario != null) {
             botonPerfil.setText(usuario.getNick().toUpperCase());
         }
     }
-
+/**
+ * Pone la foto del usuario en el menu superior
+ * La busca en el disco por si es de nueva creacion y sino en el package
+ */
     public void cargaFoto() {
-        if (usuario.getFotoFile() != null) {
-            caraIV.setImage(new Image(usuario.getFotoFile().toURI().toString()));
-        } else {
+        try {
+            caraIV.setImage(new Image("file:///C:/tempTurismo/" + usuario.getFoto()));
+            System.out.println("c:");
+        } catch (Exception e) {
             try {
                 caraIV.setImage(new Image("Imagenes/usuarios/" + usuario.getFoto()));
-            } catch (Exception e) {
+                System.out.println("package");
+            } catch (Exception ex) {
+                System.out.println("avatar");
                 caraIV.setImage(new Image("Imagenes/usuarios/avatar.png"));
             }
         }
@@ -242,6 +249,7 @@ public class PrincipalController implements Initializable {
     }
 
     //ACCIONES------------------------------------------------------------------
+ // IR a las distintas ventanas 
     @FXML
     private void irInicio(ActionEvent event) {
         Ventana.getChildren().removeAll(Ventana.getChildren());
@@ -257,7 +265,6 @@ public class PrincipalController implements Initializable {
             not.error("Error", "Error al cargar la ventana Inicio");
         }
     }
-    
 
     @FXML
     private void irActividad(ActionEvent event) {
@@ -374,6 +381,11 @@ public class PrincipalController implements Initializable {
         //ActividadController actividadController=loader.getController(); por si hace falta
     }
 
+ /**
+  * Cierra sesion, desconecta de BD
+  * Carga la ventana de inicio
+  * @param event 
+  */   
     @FXML
     private void cerrarSesion(ActionEvent event) {
 

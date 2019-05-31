@@ -8,8 +8,6 @@ import Modelo.ValidarCampos;
 import Vista.Administrador.Principal.PrincipalAdminController;
 import Vista.CambiarContra.CambiarContraController;
 import Vista.Principal.PrincipalController;
-import Vista.Registrar.RegistrarController;
-import Vista.Usuario.UsuarioController;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXPasswordField;
@@ -36,7 +34,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -55,12 +52,13 @@ public class PerfilController implements Initializable {
     private JFXPasswordField contraPF;
     private String foto;
     private boolean selecionarFoto;
-    private String mal = " -fx-text-fill:red";
-    private String correcto = " -fx-text-fill: rgb(56, 175, 88)"; //Verde
+    private final String MAL = " -fx-text-fill:red";
+    private final String CORRECTO = " -fx-text-fill: rgb(56, 175, 88)"; //Verde
     private String nick, nombre, apellidos, dni, telefono, direccion, email;
     private LocalDate fecNac;
     private PrincipalAdminController controlador;
-    
+    private ValidarCampos validarCampos;
+
     @FXML
     private AnchorPane Ventana;
     @FXML
@@ -106,7 +104,6 @@ public class PerfilController implements Initializable {
     private Label labelPW;
     @FXML
     private Label nickL;
-    private ValidarCampos validarCampos;
     @FXML
     private Label dniL;
     @FXML
@@ -120,14 +117,14 @@ public class PerfilController implements Initializable {
     @FXML
     private Label fecNacL;
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         not = new Notificacion();
         validarCampos = new ValidarCampos();
+        usuarioDAO = new usuariosDAO(gestion);
         Image img = new Image("Imagenes/banner2.jpg");
         ImageView imagev = new ImageView(img);
-        
+
         imagev.setFitHeight(230);
         imagev.setFitWidth(1300);
         Ventana.getChildren().add(imagev);
@@ -152,33 +149,28 @@ public class PerfilController implements Initializable {
 
     }
 
-    private void seleccionFoto() {
+    /**
+     * Muestra la foto que seleccionamos del explorador de archivos
+     */
+    private void selectFoto() {
         selecionarFoto = true;
-
-        //elegir archivo       
         fotoFile = usuario.selectFile();
-
-        //muestra archivo seleccionado
-        // selectFile();
         if (fotoFile != null) {
             Image image = new Image(fotoFile.toURI().toString());
             caraIV.setImage(image);
             caraIV.setPreserveRatio(false);
-//            caraIV.relocate(6, 7);
-//            caraIV.setFitWidth(192);
-//            caraIV.setFitHeight(240); 
         }
-
-//      principalController.cargaNickFoto();  
     }
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-
     }
 
+    /**
+     * Muestra los valores del usuario en las etiquetas y foto
+     */
     public void calcularnodos() {
-        usuarioDAO = new usuariosDAO(gestion);
+//        usuarioDAO = new usuariosDAO(gestion);
         nickTF.setText(usuario.getNick());
         nombreTF.setText(usuario.getNombre());
         apellidosTF.setText(usuario.getApellidos());
@@ -188,11 +180,18 @@ public class PerfilController implements Initializable {
         emailTF.setText(usuario.getEmail());
         fecNacTF.setValue(usuario.getFecNac());
         labelUser.setText(usuario.getNick().toUpperCase());
-        cargarfoto();
+        cargaFoto();
     }
 
+    /**
+     * Modifica los valores de los atributos del usuario, tambien en la BD
+     * Comprueba que los valores introducidos puedan ser modificados en la BD
+     *
+     * @param event
+     *
+     */
     @FXML
-    private void modificar(ActionEvent event) throws IOException, SQLException {
+    private void modificar(ActionEvent event) {
         boolean modiNick = false;
         boolean modiFoto = false;
         boolean todoCorrecto = true;
@@ -209,184 +208,194 @@ public class PerfilController implements Initializable {
         int id = usuario.getId();
 
         /////COMPARAMOS SI HAY CAMBIOS, cambiamos en BD y cambiamos en USUARIO
+        try {
 //---NICK
-        if (!usuario.getNick().equals(nick)) {
-            //Miramos que sea valido
-            if ((usuarioDAO.clienteExiste(nick) == true) || nickTF.getText().equals("")) {
-                todoCorrecto = false;
-                nickTF.setText("");
-                if (nickTF.getText().equals("")) {
-                    nickTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
-                } else {
-                    nickTF.setPromptText("Ese usuario ya existe");
-                }
-                nickL.setStyle(mal);
-            } else {
-                nickL.setStyle(correcto);
-                modiNick = usuarioDAO.modificarNick(nick, id);
-                if (modiNick) {
-                    usuario.setNick(nick);
-                } else {
-                    correctoSQL = false;
-                }
-            }
-        }
-        //// Otras consecuencias del cambios de Nick
-        if (modiNick) {
-            //**cambiar nombre foto              
-            File oldfile = usuario.getFotoFile();
-            File newfile = fotoFile;
-            oldfile.renameTo(newfile); //creo que no lo hace bien mejor guardar foto
-            //**cambios en vista            
-            labelUser.setText(nick.toUpperCase());
-            if (principalController != null) {
-                principalController.cargaNick();
-                principalController.cargaFoto();
-            }
-              if (controlador != null) {
-                controlador.cargaNick();
-                controlador.cargaFoto();
-            }   
-            
+            if (!usuario.getNick().equals(nick)) {
 
-        }
+                //Miramos que sea valido
+                if ((usuarioDAO.clienteExiste(nick) == true) || nickTF.getText().equals("")) {
+                    todoCorrecto = false;
+                    nickTF.setText("");
+                    if (nickTF.getText().equals("")) {
+                        nickTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
+                    } else {
+                        nickTF.setPromptText("Ese usuario ya existe");
+                    }
+                    nickL.setStyle(MAL);
+                } else {
+                    nickL.setStyle(CORRECTO);
+                    modiNick = usuarioDAO.modificarNick(nick, id);
+                    if (!modiNick) {
+                        correctoSQL = false;
+                    }
+                }
+
+            }
+            //// Otras consecuencias del cambios de Nick
+            if (modiNick) {
+
+                //**cambiar nombre foto    
+                String oldFile = usuario.getFoto();
+                String ruta = System.getProperty("user.dir");
+                File viejoFile = new File(ruta + oldFile);
+                usuario.setNick(nick);
+
+                String[] ext = oldFile.split("\\.");
+                String newFile = nick + "." + (ext[ext.length - 1]);
+                File nuevoFile = new File(ruta + newFile);
+                viejoFile.renameTo(nuevoFile);
+
+                //**cambios en vista    
+                labelUser.setText(nick.toUpperCase());
+                if (principalController != null) {
+                    principalController.cargaNick();
+                    principalController.cargaFoto();
+                }
+                if (controlador != null) {
+                    controlador.cargaNick();
+                    controlador.cargaFoto();
+                }
+
+            }
 //fin NICK  ------------
 
 //---NOMBRE
-        if (!usuario.getNombre().equals(nombre)) {
-            if (nombre.equals("")) {
-                todoCorrecto = false;
-                nombreL.setStyle(mal);
-                nombreTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
-            } else {
-                boolean modiNombre = usuarioDAO.modificarNombre(nombre, id);
-                if (modiNombre) {
-                    usuario.setNombre(nombre);
+            if (!usuario.getNombre().equals(nombre)) {
+                if (nombre.equals("")) {
+                    todoCorrecto = false;
+                    nombreL.setStyle(MAL);
+                    nombreTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
                 } else {
-                    correctoSQL = false;
+                    boolean modiNombre = usuarioDAO.modificarNombre(nombre, id);
+                    if (modiNombre) {
+                        usuario.setNombre(nombre);
+                    } else {
+                        correctoSQL = false;
+                    }
                 }
             }
-        }
 
 //---APELLIDOS
-        if (!usuario.getApellidos().equals(apellidos)) {
-            if (apellidos.equals("")) {
-                todoCorrecto = false;
-                apelliL.setStyle(mal);
-                apellidosTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
-            } else {
-                boolean modificado = usuarioDAO.modificarApellidosTF(apellidos, id);
-                if (modificado) {
-                    usuario.setApellidos(apellidos);
+            if (!usuario.getApellidos().equals(apellidos)) {
+                if (apellidos.equals("")) {
+                    todoCorrecto = false;
+                    apelliL.setStyle(MAL);
+                    apellidosTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
                 } else {
-                    correctoSQL = false;
+                    boolean modificado = usuarioDAO.modificarApellidosTF(apellidos, id);
+                    if (modificado) {
+                        usuario.setApellidos(apellidos);
+                    } else {
+                        correctoSQL = false;
+                    }
                 }
             }
-        }
 //---DNI
-        if (!usuario.getDni().equals(dni)) {
-            if (validarCampos.comprobardni(dni) == false || dni.equals("")) {
+            if (!usuario.getDni().equals(dni)) {
+                if (validarCampos.comprobardni(dni) == false || dni.equals("")) {
+                    todoCorrecto = false;
+                    dniTF.setText("");
+                    dniTF.setPromptText("Intoduce un DNI valido");
+                    dniL.setStyle(MAL);
+                } else {
+                    dniL.setStyle(CORRECTO);
+                    boolean modificado = usuarioDAO.modificarDni(dni, id);
+                    if (modificado) {
+                        usuario.setDni(dni);
+                    } else {
+                        correctoSQL = false;
+                    }
+                }
+            }
+//---FECHA NACIMIENTO
+            if (!usuario.getFecNac().equals(fecNac) || fecNac == null) {
                 todoCorrecto = false;
-                dniTF.setText("");
-                dniTF.setPromptText("Intoduce un DNI valido");
-                dniL.setStyle(mal);
+                fecNacL.setStyle(MAL);
+                fecNacTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
             } else {
-                dniL.setStyle(correcto);
-                boolean modificado = usuarioDAO.modificarDni(dni, id);
+                boolean modificado = usuarioDAO.modificarFecNac(fecNac, id);
                 if (modificado) {
-                    usuario.setDni(dni);
+                    usuario.setFecNac(fecNac);
                 } else {
                     correctoSQL = false;
                 }
             }
-        }
-//---FECHA NACIMIENTO
-        if (!usuario.getFecNac().equals(fecNac) || fecNac == null) {
-            todoCorrecto = false;
-            fecNacL.setStyle(mal);
-            fecNacTF.setPromptText("*  ESTE CAMPO ES OBLIGATORIO");
-        } else {
-            boolean modificado = usuarioDAO.modificarFecNac(fecNac, id);
-            if (modificado) {
-                usuario.setFecNac(fecNac);
-            } else {
-                correctoSQL = false;
-            }
-        }
 
 //---TELEFONO
-        if (!usuario.getTelefono().equals(telefono)) {
-            if (validarCampos.comprobarTelefono(telefono) == false || telefono.equals("")) {
-                todoCorrecto = false;
-                telefonoTF.setText("");
-                telefonoTF.setPromptText("Intoduce un Número valido");
-                telefL.setStyle(mal);
-            } else {
-                telefL.setStyle(correcto);
-                boolean modificado = usuarioDAO.modificarTelefono(telefono, id);
-                if (modificado) {
-                    usuario.setTelefono(telefono);
+            if (!usuario.getTelefono().equals(telefono)) {
+                if (validarCampos.comprobarTelefono(telefono) == false || telefono.equals("")) {
+                    todoCorrecto = false;
+                    telefonoTF.setText("");
+                    telefonoTF.setPromptText("Intoduce un Número valido");
+                    telefL.setStyle(MAL);
                 } else {
-                    correctoSQL = false;
+                    telefL.setStyle(CORRECTO);
+                    boolean modificado = usuarioDAO.modificarTelefono(telefono, id);
+                    if (modificado) {
+                        usuario.setTelefono(telefono);
+                    } else {
+                        correctoSQL = false;
+                    }
                 }
             }
-        }
 //---DIRECCION
-        if (!usuario.getDireccion().equals(direccion)) {
-            boolean modificado = usuarioDAO.modificarDireccion(direccion, id);
-            if (modificado) {
-                usuario.setDireccion(direccion);
-            } else {
-                correctoSQL = false;
-            }
-        }
-//---EMAIL
-        if (!usuario.getEmail().equals(email)) {
-            if (validarCampos.comprobarEmail(email) == false || email.equals("")) {
-                todoCorrecto = false;
-                emailTF.setText("");
-                emailTF.setPromptText("Intoduce un Email valido");
-                emailL.setStyle(mal);
-            } else {
-                emailL.setStyle(correcto);
-                boolean modificado = usuarioDAO.modificarEmail(email, id);
+            if (!usuario.getDireccion().equals(direccion)) {
+                boolean modificado = usuarioDAO.modificarDireccion(direccion, id);
                 if (modificado) {
-                    usuario.setEmail(email);
+                    usuario.setDireccion(direccion);
                 } else {
                     correctoSQL = false;
                 }
             }
-        }
+//---EMAIL
+            if (!usuario.getEmail().equals(email)) {
+                if (validarCampos.comprobarEmail(email) == false || email.equals("")) {
+                    todoCorrecto = false;
+                    emailTF.setText("");
+                    emailTF.setPromptText("Intoduce un Email valido");
+                    emailL.setStyle(MAL);
+                } else {
+                    emailL.setStyle(CORRECTO);
+                    boolean modificado = usuarioDAO.modificarEmail(email, id);
+                    if (modificado) {
+                        usuario.setEmail(email);
+                    } else {
+                        correctoSQL = false;
+                    }
+                }
+            }
 //---FOTO   
-        if (selecionarFoto) {
-            usuario.setFotoFile(fotoFile);
-            foto = usuario.renombrarFoto();  ///pasar fotofile a string
-            usuario.setFoto(foto);
-            modiFoto = usuarioDAO.modificarFoto(foto, id);
+            if (selecionarFoto) {
+                usuario.setFotoFile(fotoFile);
+                foto = usuario.renombrarFoto();  ///pasar fotofile a string
+                usuario.setFoto(foto);
+                modiFoto = usuarioDAO.modificarFoto(foto, id);
+                if (!modiFoto) {
+                    correctoSQL = false;
+                }
+            }
+//// Otras consecuencias del cambios de Foto para que se actualice la imagen del menu
             if (modiFoto) {
+                // guardar foto nueva
+                usuario.guardarFoto();
+                //cambios en vista        
+                if (principalController != null) {
+                    principalController.cargaFoto();
+                } else {
+                    controlador.cargaFoto();
+                }
+            }
+//////INFORMAR DEL RESULTADO  
+            if (todoCorrecto && correctoSQL) {
                 not.confirm("Modificar", "Ha sido modificado con exito");
             } else {
-                correctoSQL = false;
+                not.error("Modificar", "NO ha sido posible modificar");
             }
+        } catch (SQLException ex) {
+            not.error("SQL", "NO ha sido posible modificar los datos");
+        } catch (IOException ex) {
 
-        }
-//// Otras consecuencias del cambios de Foto
-        if (modiFoto) {
-            // guardar foto nueva
-            usuario.guardarFoto();
-            //cambios en vista        
-            if (principalController != null) {
-                principalController.cargaFoto();
-            } else {
-                controlador.cargaFoto();
-            }
-
-        }
-//////INFORMAR DEL RESULTADO  
-        if (todoCorrecto && correctoSQL) {
-            not.confirm("Modificar", "Ha sido modificado con exito");
-        } else {
-            not.error("Modificar", "NO ha sido posible modificar");
+            not.error("Imagen", "No hemos  podido cargar su foto");
         }
 
     }
@@ -395,11 +404,21 @@ public class PerfilController implements Initializable {
         this.gestion = gestion;
     }
 
-    private void cargarfoto() {
+    /**
+     * Muestra la foto del usuario La busca en el disco por si es de nueva
+     * creacion y sino en el package
+     */
+    private void cargaFoto() {
         try {
-            caraIV.setImage(new Image("Imagenes/usuarios/" + usuario.getFoto()));
+            caraIV.setImage(new Image("file:///C:/tempTurismo/" + usuario.getFoto()));
+
         } catch (Exception e) {
-            caraIV.setImage(new Image("Imagenes/usuarios/avatar.png"));
+            try {
+                caraIV.setImage(new Image("Imagenes/usuarios/" + usuario.getFoto()));
+
+            } catch (Exception ex) {
+                caraIV.setImage(new Image("Imagenes/usuarios/avatar.png"));
+            }
         }
     }
 
@@ -425,25 +444,18 @@ public class PerfilController implements Initializable {
         direccionTF.setEditable(true);
         emailTF.setEditable(true);
         alFrenteAP.getStyleClass().add("panePerfilPersonalEditable");
-        editarFoto();   ///comentar a Dani si puede cambiar el marco de color
-        nickTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        nombreTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        apellidosTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        dniTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        fecNacTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        emailTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        direccionTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-        telefonoTF.setStyle("-fx-background-color: rgb(153, 151, 142)");
-
+        editarFoto();
     }
 
     private void editarFoto() {
-        caraIV.setOnMouseClicked(event -> seleccionFoto());
+        caraIV.setOnMouseClicked(event -> selectFoto());
     }
-
+/**
+ * Cancela la edicion; recarga los valores y no permite la edicion
+ * @param event 
+ */
     @FXML
     private void cancelar(ActionEvent event) {
-
         alFrenteAP.getStyleClass().clear();
         alFrenteAP.getStyleClass().add("panePerfilPersonal");
         botonGuardar.setVisible(false);
@@ -466,17 +478,17 @@ public class PerfilController implements Initializable {
         emailTF.setStyle("");
         direccionTF.setStyle("");
         telefonoTF.setStyle("");
+        calcularnodos();
 
     }
 
     @FXML
     private void cambiarPassword(MouseEvent event) {
         Parent root;
-
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/Vista/CambiarContra/CambiarContra.fxml"));
-            root = loader.load();  // el meotodo initialize() se ejecuta
+            root = loader.load();  // el metodo initialize() se ejecuta
 
             //OBTENER EL CONTROLADOR DE LA VENTANA
             CambiarContraController cambiarcontracontroller = loader.getController();
@@ -491,12 +503,12 @@ public class PerfilController implements Initializable {
             escena.setScene(new Scene(root));
             escena.setResizable(false);
             escena.showAndWait();
-            
-            if(cambiarcontracontroller.conseguido() == true){
+
+            if (cambiarcontracontroller.conseguido()) {
                 not.confirm("Enhorabuena", "La contraseña se ha guardado");
             }
         } catch (IOException ex) {
-            not.error("ERROR", "Error al conectar con la base de datos");
+            not.error("ERROR", "Error al cargar la ventana");
         }
     }
 
