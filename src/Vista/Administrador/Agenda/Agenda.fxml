@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" fx:id="anchorP" prefHeight="730.0" prefWidth="1300.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Vista.Administrador.Agenda.AgendaController">
@@ -15,31 +16,34 @@
         <URL value="@/resources/estilo.css" />
     </stylesheets>
    <children>
-      <Label layoutX="610.0" layoutY="37.0" text="AGENDA DEL DIA" />
-      <Label layoutX="53.0" layoutY="85.0" text="Seleccione un dia de inicio:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label layoutX="53.0" layoutY="130.0" text="Seleccione un dia de inicio:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <JFXDatePicker fx:id="datePickerInicio" layoutX="323.0" layoutY="84.0" />
-      <JFXDatePicker fx:id="datePickerFinal" layoutX="323.0" layoutY="130.0" />
-      <JFXButton fx:id="botonComprobarAgenda" layoutX="715.0" layoutY="118.0" onAction="#cargarActividades" text="Comprobar Agenda" />
-      <TableView fx:id="tablaActividadesAgenda" layoutX="100.0" layoutY="200.0" prefHeight="480.0" prefWidth="1100.0">
+      <TableView fx:id="tablaActividadesAgenda" prefHeight="480.0" prefWidth="1300.0">
          <columns>
-            <TableColumn fx:id="columnaIdExperiencia" maxWidth="183.333" minWidth="183.333" prefWidth="183.333" resizable="false" text="Id Experiencia" />
-            <TableColumn fx:id="columnaActividad" maxWidth="183.333" minWidth="183.333" prefWidth="183.333" resizable="false" text="Actividad" />
-            <TableColumn fx:id="columnaInicio" maxWidth="183.333" minWidth="183.333" prefWidth="183.333" resizable="false" text="Inicio" />
-            <TableColumn fx:id="columnaFinal" maxWidth="183.333" minWidth="183.333" prefWidth="183.333" resizable="false" text="Final" />
-            <TableColumn fx:id="columnaPlazas" maxWidth="183.333" minWidth="183.333" prefWidth="183.333" resizable="false" text="Nº Plazas" />
-            <TableColumn fx:id="columnaPrecio" maxWidth="183.333" minWidth="183.333" prefWidth="183.333" resizable="false" text="Precio" />
+            <TableColumn fx:id="columnaIdExperiencia" maxWidth="241.0" minWidth="183.333" prefWidth="241.0" resizable="false" text="Id Experiencia" />
+            <TableColumn fx:id="columnaActividad" maxWidth="247.0" minWidth="127.0" prefWidth="247.0" resizable="false" text="Actividad" />
+            <TableColumn fx:id="columnaInicio" maxWidth="215.0" minWidth="64.0" prefWidth="215.0" resizable="false" text="Inicio" />
+            <TableColumn fx:id="columnaFinal" maxWidth="223.0" minWidth="33.0" prefWidth="223.0" resizable="false" text="Final" />
+            <TableColumn fx:id="columnaPlazas" maxWidth="356.0" minWidth="166.0" prefWidth="197.0" resizable="false" text="Nº Plazas" />
+            <TableColumn fx:id="columnaPrecio" maxWidth="294.0" minWidth="80.0" prefWidth="175.0" resizable="false" text="Precio" />
          </columns>
       </TableView>
-      <JFXComboBox fx:id="comboTipo" layoutX="566.0" layoutY="86.0" onAction="#cargarActividadesTipo" prefWidth="100.0" promptText="Tipo" />
-      <JFXComboBox fx:id="comboSubtipo" layoutX="566.0" layoutY="132.0" prefWidth="100.0" promptText="Subtipo" />
+      <Pane fx:id="paneAgenda" layoutY="479.0" prefHeight="253.0" prefWidth="1300.0">
+         <children>
+            <Label fx:id="diaInicioL" layoutX="41.0" layoutY="62.0" prefHeight="27.0" prefWidth="286.0" text="Seleccione primer día de la Agenda">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="diaFinalL" layoutX="41.0" layoutY="108.0" text="Seleccione último día de la Agenda">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <JFXDatePicker fx:id="datePickerInicio" layoutX="356.0" layoutY="61.0" prefWidth="270.0" />
+            <JFXDatePicker fx:id="datePickerFinal" layoutX="356.0" layoutY="107.0" prefWidth="270.0" />
+            <JFXButton fx:id="botonComprobarAgenda" layoutX="1072.0" layoutY="147.0" onAction="#cargarActividades" prefHeight="76.0" prefWidth="179.0" text="Comprobar Agenda" />
+            <JFXComboBox fx:id="comboTipo" layoutX="775.0" layoutY="63.0" onAction="#cargarActividadesTipo" prefHeight="25.0" prefWidth="223.0" promptText="Tipo" />
+            <JFXComboBox fx:id="comboSubtipo" layoutX="775.0" layoutY="109.0" prefHeight="25.0" prefWidth="223.0" promptText="Subtipo" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>
