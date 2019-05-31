@@ -31,7 +31,7 @@ public class subtiposDAO {
     
     public List<Subtipo> consultarSubtiposporTipo(Tipo tipo) throws SQLException {
         List<Subtipo> lista = new ArrayList<>();
-        String consulta = "SELECT id, idtipo, nombre FROM subtipos WHERE idtipo = ?;";
+        String consulta = "SELECT id, idtipo, nombre FROM subtipos WHERE idtipo = ? ORDER BY nombre;";
         PreparedStatement ps = conn.prepareStatement(consulta);
         ps.setInt(1, tipo.getId());
         ResultSet rs = ps.executeQuery();
@@ -43,7 +43,7 @@ public class subtiposDAO {
     
     public Subtipo consultarSubtipoActividad(Actividad actividad) throws SQLException {
         Subtipo subtipo = null;
-        String consulta = "SELECT id, idTipo, nombre FROM subtipos WHERE id = ?;";
+        String consulta = "SELECT id, idTipo, nombre FROM subtipos WHERE id = ? ORDER BY nombre;";
         PreparedStatement ps = conn.prepareStatement(consulta);
         ps.setInt(1, actividad.getIdsubTipo());
         ResultSet rs = ps.executeQuery();

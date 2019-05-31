@@ -54,7 +54,7 @@ public class experienciasActividadesDAO {
 
     public List<ActividadExperiencia> consultarActividadesDeExperiencia(int idExperiencia) throws SQLException {
         List<ActividadExperiencia> listaActividadesExperiencia = new ArrayList<>();
-        String sql = "SELECT orden, idExperiencia, idActividad,fechaInicio, fechaFinal, precio, numPlazas FROM experiencia_actividad WHERE idExperiencia = ?;";
+        String sql = "SELECT orden, idExperiencia, idActividad,fechaInicio, fechaFinal, precio, numPlazas FROM experiencia_actividad WHERE idExperiencia = ? ORDER BY idExperiencia, Orden;";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, idExperiencia);
         ResultSet rs = ps.executeQuery();
@@ -139,6 +139,8 @@ public class experienciasActividadesDAO {
         } else {
             subTipoInsert = subtipo.getNombre();
         }
+        System.out.println("el insert");
+        System.out.println(inicioPS + " - " + finalPS + " - " + tipoInsert + " - " + subTipoInsert);
         List<ActividadExperiencia> lista = new ArrayList<>();
         String sql = "call agendaDelDia(?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
