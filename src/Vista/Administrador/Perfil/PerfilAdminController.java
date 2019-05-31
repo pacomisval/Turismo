@@ -242,7 +242,7 @@ public class PerfilAdminController implements Initializable {
                         modiNick = usuarioDAO.modificarNick(nick, id);  // modificacion en BD
                         if (modiNick) {
                             //**cambiar nombre foto al cambiar el nick 
-                            archivoTF.setText(usuarioSeleccionado.fotoToNick());
+                            archivoTF.setText(usuarioSeleccionado.renombrarFoto());
                             usuarioSeleccionado.cambiarArchivoFoto(usuarioSeleccionado.getFoto(), archivoTF.getText());
                             usuarioDAO.modificarFoto(archivoTF.getText(), id);
                         } else {
@@ -522,7 +522,7 @@ public class PerfilAdminController implements Initializable {
     private void SelecionarFoto() {
         cambioFoto=true;
         try {
-            File fotoElegida = usuarioSeleccionado.cargarfoto();
+            File fotoElegida = usuarioSeleccionado.selectFile();
             caraIV.setImage(new Image(fotoElegida.toURI().toString()));
             String nombreString = fotoElegida.getName();
             String[] extensionStrings = nombreString.split("\\.");
