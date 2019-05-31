@@ -217,7 +217,7 @@
          <effect>
             <DropShadow height="15.0" radius="7.0" width="15.0" />
          </effect></TextField>
-      <TextField fx:id="textPrecio" layoutX="1005.0" layoutY="520.0" prefWidth="160.0">
+      <TextField fx:id="textPrecio" editable="false" layoutX="1005.0" layoutY="520.0" prefWidth="160.0">
          <effect>
             <DropShadow height="15.0" radius="7.0" width="15.0" />
          </effect></TextField>

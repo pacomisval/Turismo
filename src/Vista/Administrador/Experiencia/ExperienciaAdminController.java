@@ -451,9 +451,10 @@ public class ExperienciaAdminController implements Initializable {
                 idExperiencia = Integer.parseInt(textIdExperiencia.getText());
                 actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
                 fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
-                fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
-                precio = Double.parseDouble(textPrecio.getText());
+                fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());                
+//                precio = Double.parseDouble(textPrecio.getText());
                 numPlazas = Integer.parseInt(textNumPlazas.getText());
+                precio = actividad.getPrecio() * numPlazas;
 
                 acEx = new ActividadExperiencia(numOrden,idExperiencia,actividad,fechaIni,fechaFinal,precio,numPlazas);
                 ok = eaDAO.insertarActividadExperiencia(acEx);
@@ -500,6 +501,10 @@ public class ExperienciaAdminController implements Initializable {
         return ok;
     }
     
+    private void calcularPrecioAE(){
+        
+    }
+    
  // ------------------------- MODIFICAR ACTIVIDAD EXPERIENCIA ------------------
     
     private void modificarActividadExperiencia(){
@@ -511,6 +516,10 @@ public class ExperienciaAdminController implements Initializable {
         
         actExperiencia = tableListaExperiencias.getSelectionModel().getSelectedItem();
         
+        double precioAUX = actExperiencia.getPrecio();
+        int numPlazasAUX = actExperiencia.getNumPlazas();
+        double precioUnitario = precioAUX / numPlazasAUX;
+        
         if(actExperiencia != null){
             try {
                 orden = Integer.parseInt(textOrden.getText());
@@ -518,9 +527,9 @@ public class ExperienciaAdminController implements Initializable {
                 idActividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
                 fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
                 fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
-                precio = Double.parseDouble(textPrecio.getText());
                 numPlazas = Integer.parseInt(textNumPlazas.getText());
-
+                precio = precioUnitario * numPlazas;
+                
 
                 ok = eaDAO.modificarActividadExperiencia(orden, idExperiencia, idActividad, fechaIni, fechaFinal, precio, numPlazas);
             } catch (SQLException ex) {
@@ -549,7 +558,7 @@ public class ExperienciaAdminController implements Initializable {
                           + " \n algo raro ha ocurrido");
                 }     
             }   
-
+            //listar();
             if(ok){
                 not.confirm("MODIFICAR DB TURISMO","Operación realizada con éxito");
             }
@@ -774,6 +783,10 @@ public class ExperienciaAdminController implements Initializable {
               
         actExperiencia = tableListaExperiencias.getSelectionModel().getSelectedItem();
         
+        double precioAUX = actExperiencia.getPrecio();
+        int numPlazasAUX = actExperiencia.getNumPlazas();
+        double precioUnitario = precioAUX / numPlazasAUX;
+        
         if(actExperiencia != null){
             numOrden = actExperiencia.getOrden();
             idExperienciaLista = actExperiencia.getIdExperiencia();
@@ -784,9 +797,9 @@ public class ExperienciaAdminController implements Initializable {
             fechaFinal = actExperiencia.getFechaFinal();
             f_fin = fechaInicial.toLocalDate();
             h_fin = fechaInicial.toLocalTime();
-            precio = actExperiencia.getPrecio();
+//            precio = actExperiencia.getPrecio();            
             numPlazas = actExperiencia.getNumPlazas();
-
+            precio = precioUnitario * numPlazas;
 
             actExperiencia = new ActividadExperiencia(numOrden,idExperienciaLista,actividad,fechaInicial,fechaFinal,precio,numPlazas);
 
@@ -843,6 +856,7 @@ public class ExperienciaAdminController implements Initializable {
     private void modificar(ActionEvent event) {
         actualizar();
         listar();
+//        limpiar();
     }
 
     @FXML
@@ -882,6 +896,7 @@ public class ExperienciaAdminController implements Initializable {
     private void modificarNueva(ActionEvent event) {
         modificarActividadExperiencia();
         seleccionarItem();
+        limpiar();
     }
 
     @FXML
