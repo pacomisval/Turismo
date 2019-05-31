@@ -121,21 +121,21 @@ public class ValidarCampos {
     }
      
      
-    public boolean validarFechaLD(LocalDate date){
-        boolean ok = false;
-  
-        if(date.isBefore(LocalDate.now())){
-            ok = true;
-        }
-        return ok;
-    }
+//    public boolean validarFechaLD(LocalDate date){
+//        boolean ok = false;
+//  
+//        if(date.isBefore(LocalDate.now())){
+//            ok = true;
+//        }
+//        return ok;
+//    }
     
-    public boolean validarFechaLDT(LocalDateTime ldt){
-        boolean ok = false;
-        
-        if(ldt.isBefore(LocalDateTime.now())){
-            ok = true;
-        }
-        return ok;
-    }
+//    public boolean validarFechaLDT(LocalDateTime ldt){
+//        boolean ok = false;
+//        
+//        if(ldt.isBefore(LocalDateTime.now())){
+//            ok = true;
+//        }
+//        return ok;
+//    }
 }
