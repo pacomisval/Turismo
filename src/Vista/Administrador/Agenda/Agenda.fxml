@@ -38,8 +38,8 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <JFXDatePicker fx:id="datePickerInicio" layoutX="356.0" layoutY="61.0" prefWidth="270.0" />
-            <JFXDatePicker fx:id="datePickerFinal" layoutX="356.0" layoutY="107.0" prefWidth="270.0" />
+            <JFXDatePicker fx:id="datePickerInicio" editable="false" layoutX="356.0" layoutY="61.0" prefWidth="270.0" />
+            <JFXDatePicker fx:id="datePickerFinal" editable="false" layoutX="356.0" layoutY="107.0" prefWidth="270.0" />
             <JFXButton fx:id="botonComprobarAgenda" layoutX="1072.0" layoutY="147.0" onAction="#cargarActividades" prefHeight="76.0" prefWidth="179.0" text="Comprobar Agenda" />
             <JFXComboBox fx:id="comboTipo" layoutX="775.0" layoutY="63.0" onAction="#cargarActividadesTipo" prefHeight="25.0" prefWidth="223.0" promptText="Tipo" />
             <JFXComboBox fx:id="comboSubtipo" layoutX="775.0" layoutY="109.0" prefHeight="25.0" prefWidth="223.0" promptText="Subtipo" />

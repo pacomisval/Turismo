@@ -526,3 +526,28 @@ and open the template in the editor.
 .fondoAdminAgenda{
     -fx-background-color: rgb(223, 191, 159);
 }
+
+.labelAgenda{
+    -fx-text-fill: #ffffff;
+}
+
+.paneAgenda{
+    -fx-background-color: #333333;
+}
+
+.botonAgenda{
+    -fx-font-weight: bold;
+    -fx-text-fill: WHITE;
+
+    -fx-background-color: #666666;
+    -jfx-button-type: RAISED;
+    -fx-padding: 0.7em 0.57em;
+    -fx-border: solid;
+    -fx-cursor:hand;
+}
+
+.dateAgenda{
+    -fx-background-color: #ffffff;
+    -fx-text-alignment: right;
+/*    -fx-text-align: right;*/
+}
