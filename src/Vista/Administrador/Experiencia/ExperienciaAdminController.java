@@ -409,7 +409,8 @@ public class ExperienciaAdminController implements Initializable {
         
         return general;
     }
-    
+
+// ------------------- INSERTAR ACTIVIDAD EXPERIENCIA --------------------------    
     
     private boolean insertarActividadExperiencia(){
         int orden = 0, idExperiencia = 0,numPlazas = 0;
@@ -641,63 +642,7 @@ public class ExperienciaAdminController implements Initializable {
         }
     }
  
-// ------------------------ VALIDAR ACTIVIDAD EXPERIENCIA ------------------
-    
-    private boolean validarActividadExperiencia(){
-        ValidarCampos validar = new ValidarCampos();
-        int orden, idExperiencia,numPlazas, numPlazasAUX;
-        double precio, precioAUX, precioUnitario;
-        LocalDateTime fechaIni,fechaFinal;
-        Actividad actividad;
-        boolean ok = false;
-        boolean general = true;
-        
-        
-        if(textOrden.getText().isEmpty()){
-            not.error("ERROR CAMPO VACIO","Orden no puede quedar vacio");
-            general = false;
-        }
-        else{
-            
-            if(validar.validarNumEntero(textOrden.getText()) == 0){
-                not.error("ERROR DE FORMATO NUMERICO", " Este campo solo admite números");
-                general = false;
-            }
-            else{
-                orden = Integer.parseInt(textOrden.getText());
-            }
-        }
-//        idExperiencia = Integer.parseInt(textIdExperiencia.getText());
-//        try {
-//            actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
-//        } catch (SQLException ex) {
-//            //SQLError
-//        }
-//        fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
-//        fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
-//        precio = Double.parseDouble(textPrecio.getText());
-//        numPlazas = Integer.parseInt(textNumPlazas.getText());
 
-               
-        return general;
-    }
-    
-//     int numOrden, idExperiencia,numPlazas;
-//        double precio;        
-//        LocalDateTime fechaIni, fechaFinal;       
-//        Actividad actividad = null;
-//        ActividadExperiencia acEx = null;
-//        boolean ok = false;
-//              
-////        if(acEx != null){
-//            try {
-//                numOrden = Integer.parseInt(textOrden.getText());
-//                idExperiencia = Integer.parseInt(textIdExperiencia.getText());
-//                actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
-//                fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
-//                fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
-//                precio = Double.parseDouble(textPrecio.getText());
-//                numPlazas = Integer.parseInt(textNumPlazas.getText());
 // ---------------------------- BORRAR --------------------------------    
 
     private void eliminar(){
