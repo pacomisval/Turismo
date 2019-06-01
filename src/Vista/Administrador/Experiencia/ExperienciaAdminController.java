@@ -27,6 +27,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -387,154 +389,219 @@ public class ExperienciaAdminController implements Initializable {
             general = false;
             not.alert("ERROR CAMPO NOMBRE VACIO","No puede estar vacio");
         }
-        else {
-            
-        }
+        
         descripcion = textDescripcion.getText();           
         fechaTope = fechaTopeValidez.getValue();
         if(fechaTope != null){
             fechaTopeValidez.setValue(fechaTope);
-            
-//            if(validar.validarFechaLD(fechaTope) == true){
-//                general =  false;
-//                not.alert("ERROR FECHA SELECCIONADA", "No puede ser una fecha anterior a la actual");
-//            }
-//            else{
-//                fechaTopeValidez.setValue(fechaTope);
-//            } 
         }
         else{
             general = false;
             not.alert("ERROR CAMPO FECHA VACIO", "No puede estar vacio");
         }                    
         foto = textFoto.getText();
-        if(foto.isEmpty()){
-
-        }
-        else{
-            if(validar.validarFoto(foto) == true){
-
-            }
-            else{
+        if(!foto.isEmpty()){
+            if(validar.validarFoto(foto) != true){
                 general = false;
                 not.alert("ERROR DE FORMATO FOTO","La extensión no es válida");
-            }
+            }           
         }
-//        String idAux = String.valueOf(experiencia.getId());
-//        if(idAux.isEmpty()){
-//            not.error("ERROR ID DESCONOCIDO", "El id no existe, debe ser\n"
-//                    + " un id que exista en la tabla experiencias"); 
-//            general = false;
-//        }
-//        else{
-//            if(validar.validarNumEntero(textExperiencia.getText()) == 0){
-//                general = false;
-//                not.alert("ERROR CAMPO ID VACIO", "No puede estar vacio");
-//            }
-//            else{
-//                id = Integer.parseInt(textExperiencia.getText());
-//            }
-//        }
+        
         return general;
     }
     
     
     private boolean insertarActividadExperiencia(){
-        int numOrden, idExperiencia,numPlazas;
-        double precio;        
-        LocalDateTime fechaIni, fechaFinal;       
+        int orden = 0, idExperiencia = 0,numPlazas = 0;
+        double precio = 0;        
+        LocalDateTime fechaIni = null, fechaFinal = null;       
         Actividad actividad = null;
-        ActividadExperiencia acEx = null;
+        ActividadExperiencia acEx;
         boolean ok = false;
+        boolean general = true;
               
-//        if(acEx != null){
-            try {
-                numOrden = Integer.parseInt(textOrden.getText());
-                idExperiencia = Integer.parseInt(textIdExperiencia.getText());
-                actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
-                fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
-                fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());                
-//                precio = Double.parseDouble(textPrecio.getText());
-                numPlazas = Integer.parseInt(textNumPlazas.getText());
-                precio = actividad.getPrecio() * numPlazas;
-
-                acEx = new ActividadExperiencia(numOrden,idExperiencia,actividad,fechaIni,fechaFinal,precio,numPlazas);
-                ok = eaDAO.insertarActividadExperiencia(acEx);
-
-            } catch (SQLException ex) {
-                not.error("ERROR", "Error al insertar un registro en la tabla ActividadExperiencia");
-            } catch (java.time.format.DateTimeParseException dt){           
-                not.alert("ERROR EN EL FORMATO FECHA", "El formato de fecha no es correcto\n"
-                        + " debe se asi --->  yyyy-MM-ddTHH:mm:ss  ");
-            } catch (NumberFormatException nf) { 
+        try{
+            
+            try{
+                orden = Integer.parseInt(textOrden.getText());
+            } catch(NumberFormatException nf){
+                general = false;
                 if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
                         (nf.getMessage().equals("For input string: \" \"")) ||
                         (nf.getMessage().equals("For input string: \"\"")))){
-                    not.alert("ERROR CAMPO DE TEXTO VACIO","Verifica los campos de texto"
-                          + " \n no pueden estar vacios");
-
+                    not.alert("ERROR EL CAMPO ORDEN ESTA VACIO","Verifica que el campo de texto no este vacio");
                 }    
-                else if((nf.getMessage().equals("For input string: \""+ textOrden.getText() +"\"")) ||
-                        (nf.getMessage().equals("For input string: \""+ textIdExperiencia.getText() +"\"")) ||
-                        (nf.getMessage().equals("For input string: \""+ textIdActividad.getText() +"\"")) ||
-                        (nf.getMessage().equals("For input string: \""+ textPrecio.getText() +"\"")) ||
-                        (nf.getMessage().equals("For input string: \""+ textNumPlazas.getText() +"\""))){
-                            not.alert("ERROR FORMATO NUMERICO", "No introducir texto en los siguientes "
-                           + "campos\n: Orden, idExperiencia, idActividad, precio, numPlazas"); 
+                else if(nf.getMessage().equals("For input string: \""+ textOrden.getText() +"\"")){
+                    not.alert("ERROR FORMATO NUMERICO", "No introducir texto en el campo orden ");    
                 }
                 else{
                         not.alert("ERROR DE OTRO TIPO","Verifica los campos de texto"
                           + " \n algo raro ha ocurrido");
-                }     
-            }   
+                }
+            }
+            if(general){
+                try{
+                    idExperiencia = Integer.parseInt(textIdExperiencia.getText());
+                } catch(NumberFormatException nf){
+                    general = false;
+                    if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
+                            (nf.getMessage().equals("For input string: \" \"")) ||
+                            (nf.getMessage().equals("For input string: \"\"")))){
+                        not.alert("ERROR EL CAMPO IDEXPERIENCIA ESTA VACIO","Verifica que el campo de texto no este vacio");
+                    }
+                    else if(nf.getMessage().equals("For input string: \""+ textIdExperiencia.getText() +"\"")){
+                        not.alert("ERROR FORMATO NUMERICO", "No introducir texto en el campo idExperiencia ");
+
+                    }
+                    else{
+                            not.alert("ERROR DE OTRO TIPO","Verifica los campos de texto"
+                              + " \n algo raro ha ocurrido");
+                    }
+                }
+            }
+            
+            if(general){
+                try{
+                    actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
+                } catch(NumberFormatException nf){
+                    general = false;
+                    if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
+                            (nf.getMessage().equals("For input string: \" \"")) ||
+                            (nf.getMessage().equals("For input string: \"\"")))){
+                        not.alert("ERROR EL CAMPO ACTIVIDAD ESTA VACIO","Verifica que el campo de texto no este vacio");
+                    }
+                    else if(nf.getMessage().equals("For input string: \""+ textIdActividad.getText() +"\"")){
+                        not.alert("ERROR FORMATO NUMERICO", "No introducir texto en el campo actividad ");
+
+                    }
+                    else{
+                            not.alert("ERROR DE OTRO TIPO","Verifica los campos de texto"
+                              + " \n algo raro ha ocurrido");
+                    }
+                }
+            }
+            
+            if(general){
+                try{
+                    numPlazas = Integer.parseInt(textNumPlazas.getText());
+                } catch(NumberFormatException nf){
+                    general = false;
+                    if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
+                            (nf.getMessage().equals("For input string: \" \"")) ||
+                            (nf.getMessage().equals("For input string: \"\"")))){
+                        not.alert("ERROR EL CAMPO NUMPLAZAS ESTA VACIO","Verifica que el campo de texto no este vacio");
+                    }
+                    else if(nf.getMessage().equals("For input string: \""+ textNumPlazas.getText() +"\"")){
+                        not.alert("ERROR FORMATO NUMERICO", "No introducir texto en el campo numPlazas ");
+
+                    }
+                    else{
+                            not.alert("ERROR DE OTRO TIPO","Verifica los campos de texto"
+                              + " \n algo raro ha ocurrido");
+                    }
+                }
+            }
+            
+            if(general){
+                if(fechaIni == null && fechaFinal == null){          
+
+                    try{
+                        fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue()); 
+                    }catch(Exception es){
+                        general = false;
+                        if(es.getMessage().equals("date")){
+                            not.error("ERROR CAMPO FECHA INICIO VACIO", "Selecciona una fecha");
+                        }
+                        if(es.getMessage().equals("time")){
+                            not.error("ERROR CAMPO HORA INICIO VACIO", "Selecciona una hora");
+                        }
+
+                    }
+
+                    try{
+                        fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());  
+                    }catch(Exception es){
+                        general = false;
+                        if(es.getMessage().equals("date")){
+                            not.error("ERROR CAMPO FECHA FIN VACIO", "Selecciona una fecha");
+                        }
+                        if(es.getMessage().equals("time")){
+                            not.error("ERROR CAMPO HORA FIN VACIO", "Selecciona una hora");
+                        }
+
+                    }
+                    if(fechaFinal.isBefore(fechaIni)){
+                        general = false;
+                        not.error("ERROR AL SELECCIONAR LA FECHA FIN", 
+                                "No se puede selccionar una fecha final anterior a la fecha inicial");
+                    }
+
+                }
+            }
+                  
+            precio = actividad.getPrecio() * numPlazas;
+            
+        } catch(Exception ex){
+            general = false;
+
+        }    
+            
+        if(general){
+            try {    
+
+                acEx = new ActividadExperiencia(orden,idExperiencia,actividad,fechaIni,fechaFinal,precio,numPlazas);
+                ok = eaDAO.insertarActividadExperiencia(acEx);
+
+            } catch (SQLException ex) {
+                not.error("ERROR", "El número de orden y la actividad ya estan registrados\n"
+                        + " elige otro número de orden");
+            } catch (java.time.format.DateTimeParseException dt){           
+                not.alert("ERROR EN EL FORMATO FECHA", "El formato de fecha no es correcto");
+            } catch(Exception ex){
+                
+                not.error("ERROR: ", "Mensaje: " + ex.getMessage() + " En insertar Actividad experiencia");
+            }      
+
 
             if(ok){
-                not.confirm("INSERTAR DB TURISMO","Operación realizada con éxito");
+                not.confirm("INSERTAR EN LA TABLA EXPERINCIA ACTIVIDAD","Operación realizada con éxito");
             }
-            else {
-                not.alert("INSERTAR DB TURISMO", "No se pudo insertar el registro");
-            }
-//        }
-//        else{
-//            not.error("ERROR CAMPOS VACIOS ", "Rellena los campos obligatorios");
-//        }
-    
-  
+        }    
+               
         return ok;
     }
-    
-    private void calcularPrecioAE(){
-        
-    }
+              
     
  // ------------------------- MODIFICAR ACTIVIDAD EXPERIENCIA ------------------
     
     private void modificarActividadExperiencia(){
         int orden, idExperiencia,numPlazas;
-        double precio;
+        double precio, precioAUX;
         LocalDateTime fechaIni,fechaFinal;
-        Actividad idActividad;
+        Actividad actividad;
         boolean ok = false;
+        boolean general = true;
         
         actExperiencia = tableListaExperiencias.getSelectionModel().getSelectedItem();
         
         
         
         if(actExperiencia != null){
-            double precioAUX = actExperiencia.getPrecio();
-            int numPlazasAUX = actExperiencia.getNumPlazas();
-            double precioUnitario = precioAUX / numPlazasAUX;
+            
             try {
                 orden = Integer.parseInt(textOrden.getText());
                 idExperiencia = Integer.parseInt(textIdExperiencia.getText());
-                idActividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
+                actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
                 fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
                 fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
                 numPlazas = Integer.parseInt(textNumPlazas.getText());
-                precio = precioUnitario * numPlazas;
+                
+                precioAUX = actividad.getPrecio();
+                System.out.println("Actividad Experiencia: " + actividad.getPrecio());
+                precio = precioAUX * numPlazas;
                 
 
-                ok = eaDAO.modificarActividadExperiencia(orden, idExperiencia, idActividad, fechaIni, fechaFinal, precio, numPlazas);
+                ok = eaDAO.modificarActividadExperiencia(orden, idExperiencia, actividad, fechaIni, fechaFinal, precio, numPlazas);
             } catch (SQLException ex) {
                 not.error("ERROR", "Error al modificar un registro en la tabla ActividadExperiencia");
             } catch (java.time.format.DateTimeParseException dt){           
@@ -561,7 +628,7 @@ public class ExperienciaAdminController implements Initializable {
                           + " \n algo raro ha ocurrido");
                 }     
             }   
-            //listar();
+            
             if(ok){
                 not.confirm("MODIFICAR DB TURISMO","Operación realizada con éxito");
             }
@@ -576,9 +643,43 @@ public class ExperienciaAdminController implements Initializable {
  
 // ------------------------ VALIDAR ACTIVIDAD EXPERIENCIA ------------------
     
-    private void validarActividadExperiencia(){
+    private boolean validarActividadExperiencia(){
+        ValidarCampos validar = new ValidarCampos();
+        int orden, idExperiencia,numPlazas, numPlazasAUX;
+        double precio, precioAUX, precioUnitario;
+        LocalDateTime fechaIni,fechaFinal;
+        Actividad actividad;
+        boolean ok = false;
+        boolean general = true;
         
         
+        if(textOrden.getText().isEmpty()){
+            not.error("ERROR CAMPO VACIO","Orden no puede quedar vacio");
+            general = false;
+        }
+        else{
+            
+            if(validar.validarNumEntero(textOrden.getText()) == 0){
+                not.error("ERROR DE FORMATO NUMERICO", " Este campo solo admite números");
+                general = false;
+            }
+            else{
+                orden = Integer.parseInt(textOrden.getText());
+            }
+        }
+//        idExperiencia = Integer.parseInt(textIdExperiencia.getText());
+//        try {
+//            actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
+//        } catch (SQLException ex) {
+//            //SQLError
+//        }
+//        fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue());
+//        fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
+//        precio = Double.parseDouble(textPrecio.getText());
+//        numPlazas = Integer.parseInt(textNumPlazas.getText());
+
+               
+        return general;
     }
     
 //     int numOrden, idExperiencia,numPlazas;
@@ -847,6 +948,21 @@ public class ExperienciaAdminController implements Initializable {
         imageView.setVisible(false);
     }
     
+    private void limpiarActividadExperiencia(){
+        textOrden.clear();
+        textIdExperiencia.clear();
+        textIdActividad.clear();
+        textFechaInicio.clear();
+        textFechaFinal.clear();
+        fechaInicio.setValue(null);
+        horaInicio.setValue(null);
+        fechaFin.setValue(null);
+        horaFin.setValue(null);
+        textPrecio.clear();
+        textNumPlazas.clear();
+    }
+    
+    
 // ------------------------- EVENTOS -------------------------------------   
 
     @FXML
@@ -899,13 +1015,14 @@ public class ExperienciaAdminController implements Initializable {
     private void modificarNueva(ActionEvent event) {
         modificarActividadExperiencia();
         seleccionarItem();
-        limpiar();
+        limpiarActividadExperiencia();
     }
 
     @FXML
     private void borrarNueva(ActionEvent event) {
         eliminarActividadExperiencia();
         seleccionarItem();
+        limpiarActividadExperiencia();
     }
 
     @FXML
