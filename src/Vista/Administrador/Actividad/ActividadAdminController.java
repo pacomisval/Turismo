@@ -508,10 +508,10 @@ public class ActividadAdminController implements Initializable {
 
         actividad = tableview.getSelectionModel().getSelectedItem();
         System.out.println("ACTIVIDAD: " + actividad);
-        id = actividad.getId();
+        
         
         if(actividad != null){
-        
+            id = actividad.getId();
             ok = not.alertWarningDelete("SE ELIMINARA EL REGISTRO " + id + "",
                     "¿Estas seguro !!!?");
 

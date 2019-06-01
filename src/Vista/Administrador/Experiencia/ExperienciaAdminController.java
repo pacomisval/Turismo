@@ -178,6 +178,20 @@ public class ExperienciaAdminController implements Initializable {
                 setDisable(item.isBefore(minDate));
             }
         });
+        fechaInicio.setDayCellFactory(d -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                setDisable(item.isBefore(minDate));
+            }
+        });
+        fechaFin.setDayCellFactory(d -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                setDisable(item.isBefore(minDate));
+            }
+        });
     }
     
        
@@ -288,18 +302,6 @@ public class ExperienciaAdminController implements Initializable {
                     "Rellena los campos obligatorios");
         }
     }
-    
-//    private LocalDateTime fechaDT(LocalDate fecha, LocalTime hora){
-//        String momentoTotal1;
-//        LocalDateTime fechaRetorno = null;
-//    
-//        momentoTotal1 = fecha + " " + hora;
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        fechaRetorno = LocalDateTime.parse(momentoTotal1, formatter);
-//        
-//        return fechaRetorno;
-//    }
-    
 
 
 // ------------------------- MODIFICAR EXPERIENCIA ----------------------
@@ -516,11 +518,12 @@ public class ExperienciaAdminController implements Initializable {
         
         actExperiencia = tableListaExperiencias.getSelectionModel().getSelectedItem();
         
-        double precioAUX = actExperiencia.getPrecio();
-        int numPlazasAUX = actExperiencia.getNumPlazas();
-        double precioUnitario = precioAUX / numPlazasAUX;
+        
         
         if(actExperiencia != null){
+            double precioAUX = actExperiencia.getPrecio();
+            int numPlazasAUX = actExperiencia.getNumPlazas();
+            double precioUnitario = precioAUX / numPlazasAUX;
             try {
                 orden = Integer.parseInt(textOrden.getText());
                 idExperiencia = Integer.parseInt(textIdExperiencia.getText());
