@@ -445,7 +445,11 @@ public class ExperienciaAdminController implements Initializable {
     }
 
 // ------------------- INSERTAR ACTIVIDAD EXPERIENCIA --------------------------    
-    
+    /**
+     * InsertarActividadExperiencia utiliza una forma distinta de validar con respecto 
+     * a insertar o modificar experiencia.
+     * @return 
+     */
     private boolean insertarActividadExperiencia(){
         int orden = 0, idExperiencia = 0,numPlazas = 0;
         double precio = 0;        
@@ -454,14 +458,14 @@ public class ExperienciaAdminController implements Initializable {
         ActividadExperiencia acEx;
         boolean ok = false;
         boolean general = true;
-        
-//        general = this.validarActividadExperiencia();
-              
+            
         try{
             
             try{
                 orden = Integer.parseInt(textOrden.getText());
+                textOrden.setStyle("-fx-background-color: white");
             } catch(NumberFormatException nf){
+                textOrden.setStyle("-fx-background-color: tomato");
                 general = false;
                 if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
                         (nf.getMessage().equals("For input string: \" \"")) ||
@@ -479,7 +483,9 @@ public class ExperienciaAdminController implements Initializable {
             if(general){
                 try{
                     idExperiencia = Integer.parseInt(textIdExperiencia.getText());
+                    textIdExperiencia.setStyle("-fx-background-color: white");
                 } catch(NumberFormatException nf){
+                    textIdExperiencia.setStyle("-fx-background-color: tomato");
                     general = false;
                     if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
                             (nf.getMessage().equals("For input string: \" \"")) ||
@@ -500,7 +506,9 @@ public class ExperienciaAdminController implements Initializable {
             if(general){
                 try{
                     actividad = activiDAO.consultarActividad(Integer.parseInt(textIdActividad.getText()));
+                    textIdActividad.setStyle("-fx-background-color: white");
                 } catch(NumberFormatException nf){
+                    textIdActividad.setStyle("-fx-background-color: tomato");
                     general = false;
                     if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
                             (nf.getMessage().equals("For input string: \" \"")) ||
@@ -521,7 +529,9 @@ public class ExperienciaAdminController implements Initializable {
             if(general){
                 try{
                     numPlazas = Integer.parseInt(textNumPlazas.getText());
+                    textNumPlazas.setStyle("-fx-background-color: white");
                 } catch(NumberFormatException nf){
+                    textNumPlazas.setStyle("-fx-background-color: tomato");
                     general = false;
                     if(nf.getCause() == null && (nf.getMessage().equals("empty String") ||
                             (nf.getMessage().equals("For input string: \" \"")) ||
@@ -544,25 +554,33 @@ public class ExperienciaAdminController implements Initializable {
 
                     try{
                         fechaIni = LocalDateTime.of(fechaInicio.getValue(), horaInicio.getValue()); 
+                        fechaInicio.setStyle("-fx-background-color: white");
+                        horaInicio.setStyle("-fx-background-color: white");
                     }catch(Exception es){
                         general = false;
                         if(es.getMessage().equals("date")){
+                            fechaInicio.setStyle("-fx-background-color: tomato");
                             not.error("ERROR CAMPO FECHA INICIO VACIO", "Selecciona una fecha");
                         }
                         if(es.getMessage().equals("time")){
+                            horaInicio.setStyle("-fx-background-color: tomato");
                             not.error("ERROR CAMPO HORA INICIO VACIO", "Selecciona una hora");
                         }
 
                     }
 
                     try{
-                        fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());  
+                        fechaFinal = LocalDateTime.of(fechaFin.getValue(), horaFin.getValue());
+                        fechaFin.setStyle("-fx-background-color: white");
+                        horaFin.setStyle("-fx-background-color: white");
                     }catch(Exception es){
                         general = false;
                         if(es.getMessage().equals("date")){
+                            fechaFin.setStyle("-fx-background-color: tomato");
                             not.error("ERROR CAMPO FECHA FIN VACIO", "Selecciona una fecha");
                         }
                         if(es.getMessage().equals("time")){
+                            horaFin.setStyle("-fx-background-color: tomato");
                             not.error("ERROR CAMPO HORA FIN VACIO", "Selecciona una hora");
                         }
 
